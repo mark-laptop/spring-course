@@ -32,6 +32,7 @@ public class ServerController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         textInfoStatusServer.setText("Сервере остановлен!");
+        this.portField.setText("8189");
          this.context = new AnnotationConfigApplicationContext(Config.class);
     }
 
@@ -66,9 +67,9 @@ public class ServerController implements Initializable {
         }
         clients.clear();
         if (this.server != null) {
+            this.context.stop();
             this.server.stop();
             this.server = null;
-            this.context.stop();
         }
         textInfoStatusServer.setText("Сервере остановлен!");
     }
