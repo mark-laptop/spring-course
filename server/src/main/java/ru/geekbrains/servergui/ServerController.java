@@ -8,9 +8,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.geekbrains.clienthandler.ClientHandler;
 import ru.geekbrains.clienthandler.MessageManager;
+import ru.geekbrains.config.Config;
 import ru.geekbrains.core.Server;
 import java.net.URL;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.regex.Pattern;
 public class ServerController implements Initializable {
 
     private Server server;
-    private ClassPathXmlApplicationContext context;
+    private AnnotationConfigApplicationContext context;
 
     @FXML
     private TextField portField;
@@ -31,7 +32,7 @@ public class ServerController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         textInfoStatusServer.setText("Сервере остановлен!");
-         this.context = new ClassPathXmlApplicationContext("/context.xml");
+         this.context = new AnnotationConfigApplicationContext(Config.class);
     }
 
     public void startServer(ActionEvent actionEvent) {

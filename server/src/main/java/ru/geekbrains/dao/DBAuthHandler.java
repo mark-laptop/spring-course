@@ -1,9 +1,13 @@
 package ru.geekbrains.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class DBAuthHandler implements AuthHandler {
 
     private static final String ADD_NEW_USER = "INSERT INTO users (login, password, nickname) VALUES (?, ?, ?);";
@@ -13,7 +17,8 @@ public class DBAuthHandler implements AuthHandler {
 
     private final FactoryConnectionDB factoryConnectionDB;
 
-    public DBAuthHandler(FactoryConnectionDB factoryConnectionDB) throws SQLException {
+    @Autowired
+    public DBAuthHandler(FactoryConnectionDB factoryConnectionDB) {
         this.factoryConnectionDB = factoryConnectionDB;
     }
 

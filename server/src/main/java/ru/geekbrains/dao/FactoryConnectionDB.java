@@ -1,27 +1,31 @@
 package ru.geekbrains.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.sqlite.SQLiteDataSource;
 
+import javax.annotation.PostConstruct;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Component
 public class FactoryConnectionDB {
 
-    private String urlDatabase;
     private Connection connection;
+    private SQLiteDataSource dataSource;
     private static FactoryConnectionDB instance;
 
-    public void setUrlDatabase(String urlDatabase) {
-        this.urlDatabase = urlDatabase;
+    @Autowired
+    public void setDataSource(SQLiteDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
+    @PostConstruct
     public void init() {
         try {
-            SQLiteDataSource dataSource = new SQLiteDataSource();
-            dataSource.setUrl(urlDatabase);
-            connection = dataSource.getConnection();
-        } catch (SQLException e) {
+            Class.forName("org.sqlite.JDBC");
+            connection = this.dataSource.getConnection();
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -29,7 +33,7 @@ public class FactoryConnectionDB {
     synchronized Connection getConnection() {
         try {
             if (connection != null && connection.isClosed()) {
-                connection = DriverManager.getConnection(urlDatabase);
+                connection = this.dataSource.getConnection();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -37,7 +41,7 @@ public class FactoryConnectionDB {
         return connection;
     }
 
-    public synchronized static FactoryConnectionDB getFactoryConnectionDB() throws SQLException, ClassNotFoundException {
+    public synchronized static FactoryConnectionDB getFactoryConnectionDB() {
         if (instance != null) {
             return instance;
         }

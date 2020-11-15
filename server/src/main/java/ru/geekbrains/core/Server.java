@@ -1,5 +1,7 @@
 package ru.geekbrains.core;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.geekbrains.clienthandler.MessageManager;
 import ru.geekbrains.dao.AuthHandler;
 import ru.geekbrains.clienthandler.ClientHandler;
@@ -9,12 +11,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class Server {
     private ServerSocket serverSocket;
     private final AuthHandler authHandler;
     private List<ClientHandler> clients;
     private int port;
 
+    @Autowired
     public Server(AuthHandler authHandler) {
        this.authHandler = authHandler;
     }
