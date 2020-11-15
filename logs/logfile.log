@@ -1,0 +1,5 @@
+INFO  2020-10-11 03:05:17 [Thread-6] ru.geekbrains.clienthandler.ClientHandler (ClientHandler.java:70) - Неверный логин или пароль: логин , пароль: 
+INFO  2020-10-11 03:05:21 [Thread-6] ru.geekbrains.clienthandler.ClientHandler (ClientHandler.java:78) - Введите ник в поле ввода сообщений!
+INFO  2020-10-11 03:05:38 [Thread-6] ru.geekbrains.clienthandler.ClientHandler (ClientHandler.java:70) - Неверный логин или пароль: логин , пароль: 
+INFO  2020-11-14 18:33:10 [Thread-6] ru.geekbrains.clienthandler.ClientHandler (ClientHandler.java:78) - Введите ник в поле ввода сообщений!
+INFO  2020-11-14 18:33:14 [Thread-6] ru.geekbrains.clienthandler.ClientHandler (ClientHandler.java:78) - Введите ник в поле ввода сообщений!
