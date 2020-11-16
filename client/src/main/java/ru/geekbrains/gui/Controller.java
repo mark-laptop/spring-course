@@ -40,7 +40,7 @@ public class Controller implements Initializable {
     ListView<String> clientsView;
 
 
-    public void setAuthorized(boolean authorized) {
+    private void setAuthorized(boolean authorized) {
         this.authorized = authorized;
         if (this.authorized) {
             this.authPanel.setVisible(false);
