@@ -24,13 +24,13 @@ public class DBAuthHandler implements AuthHandler {
 
     @Override
     public void start() {
-        System.out.println("SimpleAuthHandler started...");
+        System.out.println("AuthHandler started...");
     }
 
     @Override
     public void stop() {
         closeConnection();
-        System.out.println("SimpleAuthHandler stopped...");
+        System.out.println("AuthHandler stopped...");
     }
 
     @Override
