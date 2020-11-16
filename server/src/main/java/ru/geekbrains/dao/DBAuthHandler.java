@@ -1,5 +1,6 @@
 package ru.geekbrains.dao;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Component
+@Log4j2
 public class DBAuthHandler implements AuthHandler {
 
     private static final String ADD_NEW_USER = "INSERT INTO users (login, password, nickname) VALUES (?, ?, ?);";
@@ -26,12 +28,12 @@ public class DBAuthHandler implements AuthHandler {
 
     @Override
     public void start() {
-        System.out.println("AuthHandler started...");
+        log.debug("AuthHandler started...");
     }
 
     @Override
     public void stop() {
-        System.out.println("AuthHandler stopped...");
+        log.debug("AuthHandler stopped...");
     }
 
     @Override
@@ -44,7 +46,8 @@ public class DBAuthHandler implements AuthHandler {
             statement.setString(3, nickname);
             result = statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e);
+            throw new RuntimeException(e);
         }
         return result != 0;
     }
@@ -58,7 +61,8 @@ public class DBAuthHandler implements AuthHandler {
             statement.setString(2, login);
             result = statement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e);
+            throw new RuntimeException(e);
         }
         return result != 0;
     }
@@ -71,7 +75,8 @@ public class DBAuthHandler implements AuthHandler {
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e);
+            throw new RuntimeException(e);
         }
         return false;
     }
@@ -87,7 +92,8 @@ public class DBAuthHandler implements AuthHandler {
                 return resultSet.getString("nickname");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error(e);
+            throw new RuntimeException(e);
         }
         return null;
     }

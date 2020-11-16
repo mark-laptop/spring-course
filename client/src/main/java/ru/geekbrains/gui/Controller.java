@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import lombok.extern.log4j.Log4j2;
 import ru.geekbrains.clienthandler.MessageManager;
 import ru.geekbrains.network.Network;
 
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Log4j2
 public class Controller implements Initializable {
     private boolean authorized;
     private Network network;
@@ -128,7 +130,9 @@ public class Controller implements Initializable {
             try {
                 connected();
             } catch (IOException e) {
-                showAlert("Невозможно подключиться к серверу, проверьте сетевое соединение...");
+                String msg = "Невозможно подключиться к серверу, проверьте сетевое соединение...";
+                log.debug(msg);
+                showAlert(msg);
             }
         }
     }

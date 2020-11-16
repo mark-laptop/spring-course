@@ -1,7 +1,6 @@
 package ru.geekbrains.clienthandler;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import ru.geekbrains.core.Server;
 
 import java.io.DataInputStream;
@@ -12,9 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Log4j2
 public class ClientHandler {
-
-    private static final Logger logger = LogManager.getLogger(ClientHandler.class);
 
     private Server server;
     private Socket socket;
@@ -40,7 +38,8 @@ public class ClientHandler {
             this.out = new DataOutputStream(socket.getOutputStream());
             startWorkerThread();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -56,7 +55,7 @@ public class ClientHandler {
                         if (nickname != null) {
                             if (server.isNickBusy(nickname)) {
                                 out.writeUTF("Учетная запись уже используется!");
-                                logger.info("Учетная запись с логином: {} уже существует!", tokens[1]);
+                                log.info("Учетная запись с логином: {} уже существует!", tokens[1]);
                                 continue;
                             }
                             out.writeUTF(MessageManager.AUTH_OK.getText() + nickname);
@@ -67,7 +66,7 @@ public class ClientHandler {
                             break;
                         } else {
                             out.writeUTF("Неверный логин/пароль!");
-                            logger.info("Неверный логин или пароль: логин {}, пароль: {}", tokens[1], tokens[2]);
+                            log.info("Неверный логин или пароль: логин {}, пароль: {}", tokens[1], tokens[2]);
                         }
                     }
                     if (msg.startsWith(MessageManager.REG.getText())) {
@@ -75,18 +74,18 @@ public class ClientHandler {
                         String[] tokens = msg.split(" ", 4);
                         if (tokens[3].isEmpty()) {
                             out.writeUTF("Введите ник в поле ввода сообщений!");
-                            logger.info("Введите ник в поле ввода сообщений!");
+                            log.info("Введите ник в поле ввода сообщений!");
                             continue;
                         }
                         String nickname = server.getAuthHandler().getNickByLoginPass(tokens[1], tokens[2]);
                         if (nickname != null) {
                             out.writeUTF("Пользователь с таким ником уже существует!");
-                            logger.info("Пользователь с таким ником уже существует! Ник: {}", nickname);
+                            log.info("Пользователь с таким ником уже существует! Ник: {}", nickname);
                             continue;
                         }
                         if (server.isLoginBusy(tokens[1])) {
                             out.writeUTF("Учетная запись с таким логином уже существует!");
-                            logger.info("Учетная запись с таким логином уже существует! Логин: {}, пароль: {}", tokens[1], tokens[2]);
+                            log.info("Учетная запись с таким логином уже существует! Логин: {}, пароль: {}", tokens[1], tokens[2]);
                             continue;
                         }
                         if (server.getAuthHandler().addUser(tokens[1], tokens[2], tokens[3])) {
@@ -100,7 +99,7 @@ public class ClientHandler {
                             break;
                         } else {
                             out.writeUTF("Не удалось зарегистрироваться попробуйте еще раз!");
-                            logger.info("Не удалось зарегистрироваться попробуйте еще раз!");
+                            log.info("Не удалось зарегистрироваться попробуйте еще раз!");
                         }
                     }
                 }
@@ -141,7 +140,8 @@ public class ClientHandler {
                     System.out.println(msg);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e);
+                throw new RuntimeException(e);
             } finally {
                 closeConnection();
             }
@@ -152,8 +152,9 @@ public class ClientHandler {
         Path path = Paths.get("users_catalog", this.login);
         try {
             Files.createDirectory(path);
-        } catch (IOException ignore) {
-
+        } catch (IOException e) {
+            log.error(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -165,26 +166,20 @@ public class ClientHandler {
         try {
             out.writeUTF(msg);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
+            throw new RuntimeException(e);
         }
     }
 
-    public void closeConnection() {
+    private void closeConnection() {
         server.unsubscribe(this);
         try {
             in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
+            throw new RuntimeException(e);
         }
     }
 }

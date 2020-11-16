@@ -1,5 +1,6 @@
 package ru.geekbrains.network;
 
+import lombok.extern.log4j.Log4j2;
 import ru.geekbrains.clienthandler.MessageManager;
 import ru.geekbrains.gui.CallbackArguments;
 import java.io.DataInputStream;
@@ -7,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+@Log4j2
 public class Network {
     private Socket socket;
     private DataInputStream in;
@@ -27,7 +29,7 @@ public class Network {
             out.writeUTF(msg);
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return false;
     }
@@ -90,7 +92,8 @@ public class Network {
                         }
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e);
+                    throw new RuntimeException(e);
                 } finally {
                     callDisconnect.callback();
                     closeConnection();
@@ -99,7 +102,7 @@ public class Network {
             t.setDaemon(true);
             t.start();
         } catch (Exception e) {
-//            e.printStackTrace();
+            log.error(e);
             throw e;
         }
     }
@@ -107,18 +110,11 @@ public class Network {
     private void closeConnection() {
         try {
             in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
+            throw new RuntimeException(e);
         }
     }
 }

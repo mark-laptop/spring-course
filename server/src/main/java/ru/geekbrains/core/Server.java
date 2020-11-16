@@ -1,5 +1,6 @@
 package ru.geekbrains.core;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.clienthandler.MessageManager;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Log4j2
 public class Server {
     private ServerSocket serverSocket;
     private final AuthHandler authHandler;
@@ -50,7 +52,8 @@ public class Server {
                 new ClientHandler(this, socket);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
+            throw new RuntimeException(e);
         } finally {
             stop();
         }
