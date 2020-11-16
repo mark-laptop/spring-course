@@ -43,64 +43,64 @@ public class Controller implements Initializable {
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
         if (this.authorized) {
-            authPanel.setVisible(false);
-            authPanel.setManaged(false);
-            connectPanel.setVisible(false);
-            connectPanel.setManaged(false);
+            this.authPanel.setVisible(false);
+            this.authPanel.setManaged(false);
+            this.connectPanel.setVisible(false);
+            this.connectPanel.setManaged(false);
             /*Доработать регистрацию через всплывающее окно ввода данных*/
 //            msgPanel.setVisible(true);
 //            msgPanel.setManaged(true);
-            clientsView.setVisible(true);
-            clientsView.setManaged(true);
+            this.clientsView.setVisible(true);
+            this.clientsView.setManaged(true);
         } else {
-            authPanel.setVisible(true);
-            authPanel.setManaged(true);
-            connectPanel.setVisible(true);
-            connectPanel.setManaged(true);
+            this.authPanel.setVisible(true);
+            this.authPanel.setManaged(true);
+            this.connectPanel.setVisible(true);
+            this.connectPanel.setManaged(true);
             /*Доработать регистрацию через всплывающее окно ввода данных*/
 //            msgPanel.setVisible(false);
 //            msgPanel.setManaged(false);
-            clientsView.setVisible(false);
-            clientsView.setManaged(false);
-            nickname = "";
+            this.clientsView.setVisible(false);
+            this.clientsView.setManaged(false);
+            this.nickname = "";
         }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setAuthorized(false);
-        clientsList = FXCollections.observableArrayList();
-        clientsView.setItems(clientsList);
-        network = new Network(addressField.getText(), portField.getText());
+        this.clientsList = FXCollections.observableArrayList();
+        this.clientsView.setItems(this.clientsList);
+        this.network = new Network();
     }
 
     public void sendMsg() {
-        if (network.isNotConnected()) {
+        if (this.network.isNotConnected()) {
             showAlert("Авторизируйтесь для отправки сообщений");
-            msgField.clear();
-            msgField.requestFocus();
+            this.msgField.clear();
+            this.msgField.requestFocus();
             return;
         }
-        network.sendMessage(msgField.getText());
-        msgField.clear();
-        msgField.requestFocus();
+        this.network.sendMessage(this.msgField.getText());
+        this.msgField.clear();
+        this.msgField.requestFocus();
     }
 
     public void sendAuth(ActionEvent actionEvent) {
         if(!connectDataIsCorrect()) return;
-        network.setAddress(addressField.getText());
-        network.setPort(portField.getText());
-        if (network.isNotConnected()) {
+        this.network.setAddress(this.addressField.getText());
+        this.network.setPort(this.portField.getText());
+        if (this.network.isNotConnected()) {
             try {
                 connected();
             } catch (IOException e) {
                 showAlert("Невозможно подключиться к серверу, проверьте сетевое соединение...");
             }
         }
-        if (!network.isNotConnected()) {
-            if (network.sendMessage(MessageManager.AUTH.getText() + loginField.getText() + " " + passField.getText())) {
-                loginField.clear();
-                passField.clear();
+        if (!this.network.isNotConnected()) {
+            if (this.network.sendMessage(MessageManager.AUTH.getText() + this.loginField.getText() + " " + this.passField.getText())) {
+                this.loginField.clear();
+                this.passField.clear();
             } else {
                 showAlert("Невозможно подключиться к серверу, проверьте сетевое соединение...");
             }
@@ -116,29 +116,29 @@ public class Controller implements Initializable {
 
     public void clickClientsList(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
-            String str = clientsView.getSelectionModel().getSelectedItem();
-            msgField.setText(MessageManager.WISP.getText() + str + " ");
-            msgField.requestFocus();
-            msgField.selectEnd();
+            String str = this.clientsView.getSelectionModel().getSelectedItem();
+            this.msgField.setText(MessageManager.WISP.getText() + str + " ");
+            this.msgField.requestFocus();
+            this.msgField.selectEnd();
         }
     }
 
     public void sendReg(ActionEvent actionEvent) {
         if(!connectDataIsCorrect()) return;
-        network.setAddress(addressField.getText());
-        network.setPort(portField.getText());
-        if (network.isNotConnected()) {
+        this.network.setAddress(this.addressField.getText());
+        this.network.setPort(this.portField.getText());
+        if (this.network.isNotConnected()) {
             try {
                 connected();
             } catch (IOException e) {
                 showAlert("Невозможно подключиться к серверу, проверьте сетевое соединение...");
             }
         }
-        if (!network.isNotConnected()) {
-            if (network.sendMessage(MessageManager.REG.getText() + loginField.getText() + " " + passField.getText() + " " + msgField.getText())) {
-                loginField.clear();
-                passField.clear();
-                msgField.clear();
+        if (!this.network.isNotConnected()) {
+            if (this.network.sendMessage(MessageManager.REG.getText() + this.loginField.getText() + " " + this.passField.getText() + " " + this.msgField.getText())) {
+                this.loginField.clear();
+                this.passField.clear();
+                this.msgField.clear();
             } else {
                 showAlert("Невозможно подключиться к серверу, проверьте сетевое соединение...");
             }
@@ -146,11 +146,11 @@ public class Controller implements Initializable {
     }
 
     private boolean connectDataIsCorrect() {
-        if (addressField.getText().isEmpty()) {
+        if (this.addressField.getText().isEmpty()) {
             showAlert("Не заполен адресс сервера!");
             return false;
         }
-        if (!isNumber(portField.getText())) {
+        if (!isNumber(this.portField.getText())) {
             showAlert("Порт должен содержать только цифры!");
             return false;
         }
@@ -164,17 +164,17 @@ public class Controller implements Initializable {
     }
 
     private void connected() throws IOException {
-        network.connect(
-                argsGetMessage -> mainTextArea.appendText(argsGetMessage[0]),
+        this.network.connect(
+                argsGetMessage -> this.mainTextArea.appendText(argsGetMessage[0]),
                 argsAuthOk -> {
-                    nickname = argsAuthOk[0];
+                    this.nickname = argsAuthOk[0];
                     setAuthorized(true);
                 },
                 argsGetClientsList -> Platform.runLater(() -> {
-                    clientsList.clear();
+                    this.clientsList.clear();
                     for (int i = 1; i < argsGetClientsList.length; i++) {
-                        if (argsGetClientsList[i].equals(nickname)) continue;
-                        clientsList.add(argsGetClientsList[i]);
+                        if (argsGetClientsList[i].equals(this.nickname)) continue;
+                        this.clientsList.add(argsGetClientsList[i]);
                     }
                 }),
                 argsDisconnect -> {

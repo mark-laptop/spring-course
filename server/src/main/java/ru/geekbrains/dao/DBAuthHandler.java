@@ -3,6 +3,8 @@ package ru.geekbrains.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,11 +17,11 @@ public class DBAuthHandler implements AuthHandler {
     private static final String GET_LOGIN_USER = "SELECT login FROM users WHERE login = ?;";
     private static final String GET_NICKNAME_USER = "SELECT nickname FROM users WHERE login = ? AND password = ?;";
 
-    private final FactoryConnectionDB factoryConnectionDB;
+    private final DataSource dataSource;
 
     @Autowired
-    public DBAuthHandler(FactoryConnectionDB factoryConnectionDB) {
-        this.factoryConnectionDB = factoryConnectionDB;
+    public DBAuthHandler(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -29,14 +31,14 @@ public class DBAuthHandler implements AuthHandler {
 
     @Override
     public void stop() {
-        closeConnection();
         System.out.println("AuthHandler stopped...");
     }
 
     @Override
     public synchronized boolean addUser(String login, String password, String nickname) {
         int result = 0;
-        try (PreparedStatement statement = this.factoryConnectionDB.getConnection().prepareStatement(ADD_NEW_USER)) {
+        try (Connection connection = this.dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(ADD_NEW_USER)) {
             statement.setString(1, login);
             statement.setString(2, password);
             statement.setString(3, nickname);
@@ -50,7 +52,8 @@ public class DBAuthHandler implements AuthHandler {
     @Override
     public synchronized boolean changeNickName(String login, String newNickname) {
         int result = 0;
-        try (PreparedStatement statement = this.factoryConnectionDB.getConnection().prepareStatement(CHANGE_NICKNAME_USER)) {
+        try (Connection connection = this.dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(CHANGE_NICKNAME_USER)) {
             statement.setString(1, newNickname);
             statement.setString(2, login);
             result = statement.executeUpdate();
@@ -62,7 +65,8 @@ public class DBAuthHandler implements AuthHandler {
 
     @Override
     public synchronized boolean isLoginBusy(String login) {
-        try (PreparedStatement statement = this.factoryConnectionDB.getConnection().prepareStatement(GET_LOGIN_USER)) {
+        try (Connection connection = this.dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_LOGIN_USER)) {
             statement.setString(1, login);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) return true;
@@ -74,7 +78,8 @@ public class DBAuthHandler implements AuthHandler {
 
     @Override
     public synchronized String getNickByLoginPass(String login, String password) {
-        try (PreparedStatement statement = this.factoryConnectionDB.getConnection().prepareStatement(GET_NICKNAME_USER)) {
+        try (Connection connection = this.dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_NICKNAME_USER)) {
             statement.setString(1, login);
             statement.setString(2, password);
             ResultSet resultSet = statement.executeQuery();
@@ -85,14 +90,5 @@ public class DBAuthHandler implements AuthHandler {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private void closeConnection() {
-        try {
-            if (factoryConnectionDB != null)
-                factoryConnectionDB.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }

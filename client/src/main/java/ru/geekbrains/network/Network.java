@@ -1,5 +1,6 @@
 package ru.geekbrains.network;
 
+import org.springframework.stereotype.Component;
 import ru.geekbrains.clienthandler.MessageManager;
 import ru.geekbrains.gui.CallbackArguments;
 import java.io.DataInputStream;
@@ -13,11 +14,6 @@ public class Network {
     private DataOutputStream out;
     private String address;
     private String port;
-
-    public Network(String address, String port) {
-        this.address = address;
-        this.port = port;
-    }
 
     public void setAddress(String address) {
         this.address = address;
