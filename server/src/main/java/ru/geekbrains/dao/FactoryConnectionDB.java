@@ -30,7 +30,7 @@ public class FactoryConnectionDB {
 
     synchronized Connection getConnection() {
         try {
-            if (connection != null && connection.isClosed()) {
+            if (connection == null || connection.isClosed()) {
                 connection = this.dataSource.getConnection();
             }
         } catch (SQLException e) {
