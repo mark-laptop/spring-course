@@ -1,6 +1,5 @@
 package ru.geekbrains.network;
 
-import org.springframework.stereotype.Component;
 import ru.geekbrains.clienthandler.MessageManager;
 import ru.geekbrains.gui.CallbackArguments;
 import java.io.DataInputStream;
