@@ -12,11 +12,10 @@ import java.sql.SQLException;
 public class FactoryConnectionDB {
 
     private Connection connection;
-    private DataSource dataSource;
-    private static FactoryConnectionDB instance;
+    private final DataSource dataSource;
 
     @Autowired
-    public void setDataSource(DataSource dataSource) {
+    public FactoryConnectionDB(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -38,14 +37,6 @@ public class FactoryConnectionDB {
             e.printStackTrace();
         }
         return connection;
-    }
-
-    public synchronized static FactoryConnectionDB getFactoryConnectionDB() {
-        if (instance != null) {
-            return instance;
-        }
-        instance = new FactoryConnectionDB();
-        return instance;
     }
 
     void close() throws SQLException {
