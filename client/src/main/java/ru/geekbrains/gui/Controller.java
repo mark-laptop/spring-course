@@ -87,16 +87,7 @@ public class Controller implements Initializable {
     }
 
     public void sendAuth(ActionEvent actionEvent) {
-        if(!connectDataIsCorrect()) return;
-        this.network.setAddress(this.addressField.getText());
-        this.network.setPort(this.portField.getText());
-        if (this.network.isNotConnected()) {
-            try {
-                connected();
-            } catch (IOException e) {
-                showAlert("Невозможно подключиться к серверу, проверьте сетевое соединение...");
-            }
-        }
+        runConnection();
         if (!this.network.isNotConnected()) {
             if (this.network.sendMessage(MessageManager.AUTH.getText() + this.loginField.getText() + " " + this.passField.getText())) {
                 this.loginField.clear();
@@ -107,11 +98,17 @@ public class Controller implements Initializable {
         }
     }
 
-    public void showAlert(String msg) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-            alert.showAndWait();
-        });
+    public void sendReg(ActionEvent actionEvent) {
+        runConnection();
+        if (!this.network.isNotConnected()) {
+            if (this.network.sendMessage(MessageManager.REG.getText() + this.loginField.getText() + " " + this.passField.getText() + " " + this.msgField.getText())) {
+                this.loginField.clear();
+                this.passField.clear();
+                this.msgField.clear();
+            } else {
+                showAlert("Невозможно подключиться к серверу, проверьте сетевое соединение...");
+            }
+        }
     }
 
     public void clickClientsList(MouseEvent mouseEvent) {
@@ -123,23 +120,14 @@ public class Controller implements Initializable {
         }
     }
 
-    public void sendReg(ActionEvent actionEvent) {
-        if(!connectDataIsCorrect()) return;
+    private void runConnection() {
+        if (!connectDataIsCorrect()) return;
         this.network.setAddress(this.addressField.getText());
         this.network.setPort(this.portField.getText());
         if (this.network.isNotConnected()) {
             try {
                 connected();
             } catch (IOException e) {
-                showAlert("Невозможно подключиться к серверу, проверьте сетевое соединение...");
-            }
-        }
-        if (!this.network.isNotConnected()) {
-            if (this.network.sendMessage(MessageManager.REG.getText() + this.loginField.getText() + " " + this.passField.getText() + " " + this.msgField.getText())) {
-                this.loginField.clear();
-                this.passField.clear();
-                this.msgField.clear();
-            } else {
                 showAlert("Невозможно подключиться к серверу, проверьте сетевое соединение...");
             }
         }
@@ -182,5 +170,12 @@ public class Controller implements Initializable {
                     setAuthorized(false);
                 }
         );
+    }
+
+    private void showAlert(String msg) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
+            alert.showAndWait();
+        });
     }
 }
