@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.sqlite.SQLiteDataSource;
 
+import javax.sql.DataSource;
+
 @Configuration
 @ComponentScan(basePackages = "ru.geekbrains")
 @PropertySource("classpath:db.properties")
@@ -16,7 +18,7 @@ public class Config {
     private String dbURL;
 
     @Bean
-    public SQLiteDataSource getDataSource() {
+    public DataSource getDataSource() {
         SQLiteDataSource dataSource = new SQLiteDataSource();
         dataSource.setUrl(dbURL);
         return dataSource;
