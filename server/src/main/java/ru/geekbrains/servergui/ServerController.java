@@ -68,9 +68,9 @@ public class ServerController implements Initializable {
         }
         clients.clear();
         if (this.server != null) {
-            this.context.stop();
             this.server.stop();
             this.server = null;
+            this.context.stop();
         }
         textInfoStatusServer.setText("Сервере остановлен!");
     }
