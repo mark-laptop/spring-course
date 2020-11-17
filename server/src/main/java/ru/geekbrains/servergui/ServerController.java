@@ -13,6 +13,7 @@ import ru.geekbrains.clienthandler.ClientHandler;
 import ru.geekbrains.clienthandler.MessageManager;
 import ru.geekbrains.config.Config;
 import ru.geekbrains.core.Server;
+
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -33,7 +34,7 @@ public class ServerController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         textInfoStatusServer.setText("Сервере остановлен!");
         this.portField.setText("8189");
-         this.context = new AnnotationConfigApplicationContext(Config.class);
+        this.context = new AnnotationConfigApplicationContext(Config.class);
     }
 
     public void startServer(ActionEvent actionEvent) {
